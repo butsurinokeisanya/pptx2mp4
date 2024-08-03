@@ -1,12 +1,12 @@
-# Python による PowerPoint 動画作成 pptx2mp4
+# Python による PowerPoint 動画作成 Webアプリ pptx2mp4
 
-パワーポイントを動画に変換する自作ソフトを作成しました. Pythonを用いてパワーポイントファイルから動画を作成するwebアプリケーションです. Windowsにのみ対応します.
+パワーポイントを動画に変換する自作ソフトを作成した. Pythonを用いてパワーポイントファイルから動画を作成するwebアプリケーションである. Windowsにのみ対応する.
 pdf2png: pdfスライド1枚目をyoutube用サムネイルにする.
-txt2wav (pyttsx3): テキストファイルを音声ファイルにする.
-txt2wav (voicepeak): テキストファイルを音声ファイルにする (voicepeak使用).
-pptx2mp4 (pyttsx3): パワーポイントファイルから動画を作成する.
-pptx2mp4 (voicepeak): パワーポイントファイルから動画を作成する (voicepeak使用).
-marge_mp4
+txt2wav: (pyttsx3): テキストファイルを音声ファイルにする.
+txt2wav: (voicepeak): テキストファイルを音声ファイルにする (voicepeak使用).
+pptx2mp4: (pyttsx3): パワーポイントファイルから動画を作成する.
+pptx2mp4: (voicepeak): パワーポイントファイルから動画を作成する (voicepeak使用).
+marge_mp4: 複数のmp4ファイルをファイル名辞書順に結合する.
 ![トップ画面](top.png)
 
 ## 実行環境
@@ -37,7 +37,7 @@ $ git clone https://github.com/butsurinokeisanya/pptx2mp4.git
 
 ## 移動
 ```
-cd cd pptx2mp4
+$ cd pptx2mp4
 ```
 ## パッケージインストール
 
@@ -57,6 +57,6 @@ $ py app.py
 ```
 http://127.0.0.1:5000/
 ```
-
+![トップ画面](top.png)
 ## 次回以降はクリックで起動できる.
-boot.batはアプリケーション起動とブラウザでローカルホストhttp://127.0.0.1:5000/にアクセスするバッチファイルである. 次回からはboot.batをクリックで実行するとブラウザでwebアプリケーションが立ち上がる.
+boot.batはアプリケーション起動とブラウザでローカルホストhttp://127.0.0.1:5000/ にアクセスするバッチファイルである. 次回からはboot.batをクリックで実行するとブラウザでwebアプリケーションが立ち上がる.
