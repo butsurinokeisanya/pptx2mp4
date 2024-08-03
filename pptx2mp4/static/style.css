@@ -1,0 +1,22 @@
+.title {
+    color: white;
+    background: green
+}
+
+.subtitle {
+    background: #87cefa
+}
+
+.error {
+    color: red
+}
+
+.menu {
+    color: white;
+    background: purple
+}
+
+.submenu {
+    color: white;
+    background: blue
+}

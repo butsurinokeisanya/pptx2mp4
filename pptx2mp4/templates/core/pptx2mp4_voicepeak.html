@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block body %}
+<table width="100%" cellspacing="0" cellpadding="5">
+    <tbody>
+        <tr>
+            <th class="subtitle" align="center">
+                <big>pptx2mp4</big>
+            </th>
+        </tr>
+    </tbody>
+</table>
+　本プログラムの目的はパワーポイントファイルから動画ファイルを作成することである. 従来は動画作成GUIソフト使わなければ合成音声による講義動画を作成することは難しかったが,
+本プログラムによってパワーポイントさえあればパワーポイントのノートを読み上げる講義動画を作成できるようになった. 使い方について説明する. まず, pptxファイルを準備する.
+ここですべてのスライドのノートには少なくとも1文字以上の文章を記載しておかなければならない.
+さもないと正常な動作は補償しない. パワーポイントのエクスポート機能を使ってpdfファイルを準備しておく. pdfファイルとpptxファイルをアップロードし, 作成ボタンをクリックすることにより, 動画ファイルmp4が作成される.
+動画作成には相当な時間がかかるため, 覚悟されたい.<br><br>
+<form id="upload-form" action="{{ url_for('pptx2mp4_voicepeak_add') }}" method="post" class="add-entry"
+    enctype="multipart/form-data">
+    <table cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+            <th class="th" nowrap="" align="left">
+                <small>■</small>
+                pdfファイル
+            </th>
+            <td class="td" nowrap="">
+                <input type="file" id="upload_files1" name="upload_files1" accept=".pdf" class="form-control">
+            </td>
+        </tbody>
+
+        <tbody>
+            <th class="th" nowrap="" align="left">
+                <small>■</small>
+                pptxファイル (ノート付)
+            </th>
+            <td class="td" nowrap="">
+                <input type="file" id="upload_files2" name="upload_files2" accept=".pptx" class="form-control">
+            </td>
+        </tbody>
+    </table>
+    <input type="submit" value="作成" class="form-control btn btn-primary">
+</form>
+
+<div id="progress-container" style="display:none;">
+    <p>Progress:</p>
+    <div class="progress">
+        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+            aria-valuemin="0" aria-valuemax="100">0%</div>
+    </div>
+</div>
+
+{% if image_name1 %}
+<p><a href="{{ url_for('pptx2mp4_voicepeak_download') }}">ダウンロード</a></p>
+{% endif %}
+{% endblock %}
