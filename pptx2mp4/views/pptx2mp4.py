@@ -71,6 +71,10 @@ def delete_all_files_in_folder(folder_path):
     except Exception as e:
         print(f"Failed to access folder {folder_path}. Reason: {e}")
 
+def sort_numerically(file_list):
+    return sorted(file_list, key=lambda x: int(re.search(r'(\d+)', os.path.basename(x)).group(0)))
+
+
 @app.route('/pptx2mp4_add', methods=['POST'])
 def pptx2mp4_add():
     delete_all_files_in_folder(UPLOAD_FOLDER1)
@@ -109,10 +113,10 @@ def pptx2mp4_add():
     process_pptx(pptx_path, output_folder)
 
     png_files = glob.glob(f'{DOWNLOAD_FOLDER1}/*.png')
-    png_files = sorted(png_files, key=lambda x: os.path.basename(x).split(".")[0])
+    png_files = sort_numerically(png_files)
 
     wav_files = glob.glob(f'{DOWNLOAD_FOLDER2}/*.wav')
-    wav_files = sorted(wav_files, key=lambda x: os.path.basename(x).split(".")[0])
+    wav_files = sort_numerically(wav_files)
 
     if len(wav_files) != len(png_files):
         print("wavファイルとpngファイルの個数が等しくないので終了します.")
