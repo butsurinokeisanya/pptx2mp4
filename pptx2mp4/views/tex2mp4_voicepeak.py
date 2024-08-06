@@ -145,7 +145,7 @@ def tex2mp4_voicepeak_add():
     delete_all_files_in_folder(UPLOAD_FOLDER2)
     delete_all_files_in_folder(DOWNLOAD_FOLDER1)
     delete_all_files_in_folder(DOWNLOAD_FOLDER2)
-    delete_all_files_in_folder(DOWNLOAD_FOLDER3))
+    delete_all_files_in_folder(DOWNLOAD_FOLDER3)
 
     pdf_file = request.files['upload_files1']
     if pdf_file:
