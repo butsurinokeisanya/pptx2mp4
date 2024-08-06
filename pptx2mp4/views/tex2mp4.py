@@ -13,21 +13,16 @@ from pdf2image import convert_from_path
 import glob
 from moviepy.editor import *
 import pptx
-import time
 from werkzeug.utils import secure_filename
-import subprocess
 import re
-from pydub import AudioSegment
-
 
 UPLOAD_FOLDER1 = r'.\pptx2mp4\static\pdf'
-UPLOAD_FOLDER2 = r'.\pptx2mp4\static\pptx'
-DOWNLOAD_FOLDER1=r'.\pptx2mp4\static\png'
-DOWNLOAD_FOLDER2=r'.\pptx2mp4\static\wav'
-DOWNLOAD_FOLDER3=r'.\pptx2mp4\static\mp4'
+UPLOAD_FOLDER2 = r'.\pptx2mp4\static\tex'
+DOWNLOAD_FOLDER1 = r'.\pptx2mp4\static\png'
+DOWNLOAD_FOLDER2 = r'.\pptx2mp4\static\wav'
+DOWNLOAD_FOLDER3 = r'.\pptx2mp4\static\mp4'
 ALLOWED_EXTENSIONS1 = {'pdf'}
-ALLOWED_EXTENSIONS2 = {'pptx'}
-
+ALLOWED_EXTENSIONS2 = {'tex'}
 
 def allowed_file(filename, ALLOWED_EXTENSIONS):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -35,31 +30,34 @@ def allowed_file(filename, ALLOWED_EXTENSIONS):
 def randomname(n):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=n))
 
+def convert_text_to_speech(text, output_file):
+    engine = pyttsx3.init()
+    engine.save_to_file(text, output_file)
+    engine.runAndWait()
+
+def extract_narrations_from_tex(tex_file_path):
+    narrations = []
+    with open(tex_file_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            if '%!' in line:
+                narration = line.split('%!')[1].strip()
+                narrations.append(narration)
+    return narrations
+
+def process_tex(input_tex, output_folder):
+    narrations = extract_narrations_from_tex(input_tex)
+    os.makedirs(output_folder, exist_ok=True)
+    for i, narration in enumerate(narrations, start=1):
+        wav_filename = os.path.join(output_folder, f"{i}.wav")
+        convert_text_to_speech(narration, wav_filename)
+        print(f"Created {wav_filename} for narration {i}")
+
 def pdf_to_images(pdf_path, output_folder):
     images = convert_from_path(pdf_path)
     os.makedirs(output_folder, exist_ok=True)
     for i, image in enumerate(images):
         image_path = os.path.join(output_folder, f"{i+1}.png")
         image.save(image_path, "PNG")
-
-def convert_text_to_speech(text, output_file):
-    engine = pyttsx3.init()
-    engine.save_to_file(text, output_file)
-    engine.runAndWait()
-
-def process_pptx(input_pptx, output_folder):
-    presentation = pptx.Presentation(input_pptx)
-    os.makedirs("wav", exist_ok=True)
-    for i, notes_slide in enumerate(presentation.slides, start=1):
-        notes_text = ""
-        if notes_slide.has_notes_slide and notes_slide.notes_slide:
-            if notes_slide.notes_slide.notes_text_frame:
-                for paragraph in notes_slide.notes_slide.notes_text_frame.paragraphs:
-                    notes_text += paragraph.text + "\n"
-            if notes_text:
-                wav_filename = os.path.join(output_folder, f"{i}.wav")
-                convert_text_to_speech(notes_text, wav_filename)
-                print(f"Created {wav_filename} for Slide {i}")
 
 def delete_all_files_in_folder(folder_path):
     try:
@@ -79,43 +77,43 @@ def delete_all_files_in_folder(folder_path):
 def sort_numerically(file_list):
     return sorted(file_list, key=lambda x: int(re.search(r'(\d+)', os.path.basename(x)).group(0)))
 
-
-@app.route('/pptx2mp4_add', methods=['POST'])
-def pptx2mp4_add():
+@app.route('/tex2mp4_add', methods=['POST'])
+def tex2mp4_add():
     delete_all_files_in_folder(UPLOAD_FOLDER1)
     delete_all_files_in_folder(UPLOAD_FOLDER2)
     delete_all_files_in_folder(DOWNLOAD_FOLDER1)
     delete_all_files_in_folder(DOWNLOAD_FOLDER2)
     delete_all_files_in_folder(DOWNLOAD_FOLDER3)
-    image1 = request.files['upload_files1']
-    if image1:
-        if allowed_file(image1.filename, ALLOWED_EXTENSIONS1):
-            image_name1 = secure_filename(image1.filename)
-            image1.save(os.path.join(UPLOAD_FOLDER1, image_name1))
+
+    pdf_file = request.files['upload_files1']
+    if pdf_file:
+        if allowed_file(pdf_file.filename, ALLOWED_EXTENSIONS1):
+            image_name = secure_filename(pdf_file.filename)
+            pdf_file.save(os.path.join(UPLOAD_FOLDER1, image_name))
         else:
-            image_name1 = None
+            image_name = None
             flash('pdfファイルではなかったので失敗しました.', 'alert alert-warning')
     else:
-        image_name1 = None
+        image_name = None
 
-    image2 = request.files['upload_files2']
-    if image2:
-        if allowed_file(image2.filename, ALLOWED_EXTENSIONS2):
-            image_name2 = secure_filename(image2.filename)
-            image2.save(os.path.join(UPLOAD_FOLDER2, image_name2))
+    tex_file = request.files['upload_files2']
+    if tex_file:
+        if allowed_file(tex_file.filename, ALLOWED_EXTENSIONS2):
+            tex_name = secure_filename(tex_file.filename)
+            tex_file.save(os.path.join(UPLOAD_FOLDER2, tex_name))
         else:
-            image_name2 = None
-            flash('pptxファイルではなかったので失敗しました.', 'alert alert-warning')
+            tex_name = None
+            flash('texファイルではなかったので失敗しました.', 'alert alert-warning')
     else:
-        image_name2 = None
+        tex_name = None
 
-    pdf_path = os.path.join(UPLOAD_FOLDER1, image_name1)
+    pdf_path = os.path.join(UPLOAD_FOLDER1, image_name)
     output_folder = DOWNLOAD_FOLDER1
     pdf_to_images(pdf_path, output_folder)
 
-    pptx_path = os.path.join(UPLOAD_FOLDER2, image_name2)
+    tex_path = os.path.join(UPLOAD_FOLDER2, tex_name)
     output_folder = DOWNLOAD_FOLDER2
-    process_pptx(pptx_path, output_folder)
+    process_tex(tex_path, output_folder)
 
     png_files = glob.glob(f'{DOWNLOAD_FOLDER1}/*.png')
     png_files = sort_numerically(png_files)
@@ -137,21 +135,18 @@ def pptx2mp4_add():
         clips.append(video_clip)
 
     concat_clip = concatenate_videoclips(clips, method="compose")
-    concat_clip.write_videofile(os.path.join(DOWNLOAD_FOLDER3, image_name1.split(".")[0] + ".mp4"), fps=24, write_logfile=True)
+    concat_clip.write_videofile(os.path.join(DOWNLOAD_FOLDER3, image_name.split(".")[0] + ".mp4"), fps=24, write_logfile=True)
 
     flash('変換されました', 'alert alert-info')
-    session['image_name1'] = image_name1  # Save image_name1 in the session
-    return render_template('core/pptx2mp4.html',image_name1=image_name1)
+    session['image_name'] = image_name  # Save image_name in the session
+    return render_template('core/tex2mp4.html', image_name=image_name)
 
-@app.route('/pptx2mp4_download', methods=['GET'])
-def pptx2mp4_download():
-    image_name1 = session.get('image_name1')
-    print(f"image_name1 retrieved from session: {image_name1}")  # Debugging statement
-    if image_name1:
-        return send_file(f'static/mp4/{image_name1.split(".")[0]}.mp4', as_attachment=True)
+@app.route('/tex2mp4_download', methods=['GET'])
+def tex2mp4_download():
+    image_name = session.get('image_name')
+    print(f"image_name retrieved from session: {image_name}")  # Debugging statement
+    if image_name:
+        return send_file(f'static/mp4/{image_name.split(".")[0]}.mp4', as_attachment=True)
     else:
         flash('ファイルが見つかりませんでした。', 'alert alert-warning')
-        return redirect(url_for('pptx2mp4_add'))
-
-
-
+        return redirect(url_for('tex2mp4_add'))

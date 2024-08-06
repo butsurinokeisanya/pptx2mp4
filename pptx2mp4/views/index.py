@@ -30,3 +30,11 @@ def pptx2mp4_voicepeak():
 @app.route('/marge_mp4')
 def marge_mp4():
     return render_template('core/marge_mp4.html')
+
+@app.route('/tex2mp4')
+def tex2mp4():
+    return render_template('core/tex2mp4.html')
+
+@app.route('/tex2mp4_voicepeak')
+def tex2mp4_voicepeak():
+    return render_template('core/tex2mp4_voicepeak.html')

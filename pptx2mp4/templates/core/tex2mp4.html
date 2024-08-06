@@ -4,16 +4,16 @@
     <tbody>
         <tr>
             <th class="subtitle" align="center">
-                <big>pptx2mp4 (pyttsx3)</big>
+                <big>tex2mp4 (pyttsx3)</big>
             </th>
         </tr>
     </tbody>
 </table>
-　本プログラムの目的はパワーポイントファイルから動画ファイルを作成することである. 従来は動画作成GUIソフト使わなければ合成音声による講義動画を作成することは難しかったが,
-本プログラムによってパワーポイントさえあれば動画を作成できるようにした. 使い方について説明する. まず, pptxファイルを準備する. ここですべてのスライドのノートには少なくとも1文字以上の文章を記載しておかなければならない.
-さもないと正常な動作は補償しない. パワーポイントのエクスポート機能を使ってpdfファイルを準備しておく. pdfファイルとpptxファイルをアップロードし, 作成ボタンをクリックすることにより, 動画ファイルmp4が作成される.
+　本プログラムの目的はTeXファイルから動画ファイルを作成することである. 従来は動画作成GUIソフト使わなければ合成音声による講義動画を作成することは難しかったが,
+本プログラムによってTeXさえあれば動画を作成できるようにした. 使い方について説明する. まず, texファイルを準備する. 全てのスライドに特殊なコメントアウト"%!"を必ず1つつけなければならない. "%!"
+の文に記載したコメントアウト分がナレーションとして採用される. pdfファイルとtexファイルをアップロードし, 作成ボタンをクリックすることにより, 動画ファイルmp4が作成される.
 動画作成には相当な時間がかかるため, 覚悟されたい.<br><br>
-<form id="upload-form" action="{{ url_for('pptx2mp4_add') }}" method="post" class="add-entry"
+<form id="upload-form" action="{{ url_for('tex2mp4_add') }}" method="post" class="add-entry"
     enctype="multipart/form-data">
     <table cellspacing="2" cellpadding="2" border="1">
         <tbody>
@@ -29,10 +29,10 @@
         <tbody>
             <th class="th" nowrap="" align="left">
                 <small>■</small>
-                pptxファイル
+                texファイル
             </th>
             <td class="td" nowrap="">
-                <input type="file" id="upload_files2" name="upload_files2" accept=".pptx" class="form-control">
+                <input type="file" id="upload_files2" name="upload_files2" accept=".tex" class="form-control">
             </td>
         </tbody>
     </table>
@@ -47,7 +47,7 @@
     </div>
 </div>
 
-{% if image_name1 %}
-<p><a href="{{ url_for('pptx2mp4_download') }}">ダウンロード</a></p>
+{% if image_name %}
+<p><a href="{{ url_for('tex2mp4_download') }}">ダウンロード</a></p>
 {% endif %}
 {% endblock %}

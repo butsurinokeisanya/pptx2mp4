@@ -48,7 +48,7 @@ def playVoicePeak(script, outpath, narrator="Japanese Female 4", happy=80, sad=0
     process.communicate()
 
 def split_script(script, max_length=140):
-    sentences = re.split(r'(?<=。|！|\!|\.|\?|\？)', script)
+    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', script)
     parts = []
     current_part = ""
 
@@ -96,8 +96,11 @@ def process_txt(input_txt, output_folder,image_name):
         
         # 一時ファイルを削除
         for wav_file in wav_files:
-            os.remove(wav_file)
-            print(f"Deleted temporary file {wav_file}")
+            if os.path.exists(wav_file):
+                os.remove(wav_file)
+                print(f"Deleted temporary file {wav_file}")
+            else:
+                print(f"Temporary file {wav_file} does not exist")
 
 
 def delete_all_files_in_folder(folder_path):

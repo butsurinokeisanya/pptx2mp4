@@ -1,0 +1,25 @@
+ffmpeg version 4.2.2 Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 9.2.1 (GCC) 20200122
+  configuration: --enable-gpl --enable-version3 --enable-sdl2 --enable-fontconfig --enable-gnutls --enable-iconv --enable-libass --enable-libdav1d --enable-libbluray --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libopus --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libtheora --enable-libtwolame --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libzimg --enable-lzma --enable-zlib --enable-gmp --enable-libvidstab --enable-libvorbis --enable-libvo-amrwbenc --enable-libmysofa --enable-libspeex --enable-libxvid --enable-libaom --enable-libmfx --enable-amf --enable-ffnvcodec --enable-cuvid --enable-d3d11va --enable-nvenc --enable-nvdec --enable-dxva2 --enable-avisynth --enable-libopenmpt
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Guessed Channel Layout for Input Stream #0.0 : stereo
+Input #0, s32le, from 'pipe:':
+  Duration: N/A, bitrate: 2822 kb/s
+    Stream #0:0: Audio: pcm_s32le, 44100 Hz, stereo, s32, 2822 kb/s
+Stream mapping:
+  Stream #0:0 -> #0:0 (pcm_s32le (native) -> mp3 (libmp3lame))
+Output #0, mp3, to 'kikinagasi_math1TEMP_MPY_wvf_snd.mp3':
+  Metadata:
+    TSSE            : Lavf58.29.100
+    Stream #0:0: Audio: mp3 (libmp3lame), 44100 Hz, stereo, s32p
+    Metadata:
+      encoder         : Lavc58.54.100 libmp3lame
+size=     512kB time=00:00:39.73 bitrate= 105.6kbits/s speed=79.5x    size=    1024kB time=00:01:19.57 bitrate= 105.4kbits/s speed=79.5x    size=    1792kB time=00:01:59.79 bitrate= 122.5kbits/s speed=79.8x    size=    2304kB time=00:02:39.63 bitrate= 118.2kbits/s speed=79.7x    size=    3072kB time=00:03:19.89 bitrate= 125.9kbits/s speed=79.9x    size=    3584kB time=00:03:59.88 bitrate= 122.4kbits/s speed=79.9x    size=    4352kB time=00:04:40.29 bitrate= 127.2kbits/s speed=  80x    size=    4864kB time=00:05:20.99 bitrate= 124.1kbits/s speed=80.2x    size=    5632kB time=00:06:02.00 bitrate= 127.4kbits/s speed=80.4x    size=    6144kB time=00:06:41.34 bitrate= 125.4kbits/s speed=80.2x    size=    6656kB time=00:07:19.87 bitrate= 124.0kbits/s speed=79.9x    size=    7424kB time=00:07:58.40 bitrate= 127.1kbits/s speed=79.6x    size=    7936kB time=00:08:37.69 bitrate= 125.6kbits/s speed=79.5x    size=    8448kB time=00:09:16.35 bitrate= 124.4kbits/s speed=79.4x    size=    9216kB time=00:09:55.95 bitrate= 126.7kbits/s speed=79.4x    size=    9728kB time=00:10:35.53 bitrate= 125.4kbits/s speed=79.3x    size=   10496kB time=00:11:14.79 bitrate= 127.4kbits/s speed=79.3x    size=   11008kB time=00:11:55.02 bitrate= 126.1kbits/s speed=79.4x    size=   11776kB time=00:12:34.52 bitrate= 127.9kbits/s speed=79.3x    size=   12288kB time=00:13:14.93 bitrate= 126.6kbits/s speed=79.4x    size=   12800kB time=00:13:53.56 bitrate= 125.8kbits/s speed=79.3x    size=   13568kB time=00:14:32.67 bitrate= 127.4kbits/s speed=79.2x    size=   14056kB time=00:14:59.55 bitrate= 128.0kbits/s speed=79.1x    
+video:0kB audio:14056kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.001758%

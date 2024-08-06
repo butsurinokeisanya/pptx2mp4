@@ -20,26 +20,18 @@ import re
 from pydub import AudioSegment
 
 UPLOAD_FOLDER1 = r'.\pptx2mp4\static\pdf'
-UPLOAD_FOLDER2 = r'.\pptx2mp4\static\pptx'
-DOWNLOAD_FOLDER1=r'.\pptx2mp4\static\png'
-DOWNLOAD_FOLDER2=r'.\pptx2mp4\static\wav'
-DOWNLOAD_FOLDER3=r'.\pptx2mp4\static\mp4'
+UPLOAD_FOLDER2 = r'.\pptx2mp4\static\tex'
+DOWNLOAD_FOLDER1 = r'.\pptx2mp4\static\png'
+DOWNLOAD_FOLDER2 = r'.\pptx2mp4\static\wav'
+DOWNLOAD_FOLDER3 = r'.\pptx2mp4\static\mp4'
 ALLOWED_EXTENSIONS1 = {'pdf'}
-ALLOWED_EXTENSIONS2 = {'pptx'}
-
+ALLOWED_EXTENSIONS2 = {'tex'}
 
 def allowed_file(filename, ALLOWED_EXTENSIONS):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def randomname(n):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=n))
-
-def pdf_to_images(pdf_path, output_folder):
-    images = convert_from_path(pdf_path)
-    os.makedirs(output_folder, exist_ok=True)
-    for i, image in enumerate(images):
-        image_path = os.path.join(output_folder, f"{i+1}.png")
-        image.save(image_path, "PNG")
 
 def playVoicePeak(script, outpath, narrator="Japanese Female 4", happy=80, sad=0, angry=0, fun=10):
     exepath = "C:/Program Files/VOICEPEAK/voicepeak.exe"
@@ -54,7 +46,7 @@ def playVoicePeak(script, outpath, narrator="Japanese Female 4", happy=80, sad=0
     process.communicate()
 
 def split_script(script, max_length=140):
-    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', script)
+    sentences = re.split(r'(?<=。|！|\!|\,|、|\.|\?|\？)', script)
     parts = []
     current_part = ""
 
@@ -74,43 +66,51 @@ def split_script(script, max_length=140):
 def concatenate_wav_files(wav_files, output_path):
     combined = AudioSegment.empty()
     for wav_file in wav_files:
-        audio_segment = AudioSegment.from_wav(wav_file)
-        combined += audio_segment
-    combined.export(output_path, format="wav")
+        if os.path.exists(wav_file):
+            combined += AudioSegment.from_wav(wav_file)
+        else:
+            print(f"File not found: {wav_file}")
+    combined.export(output_path, format='wav')
 
+def extract_narrations_from_tex(tex_file_path):
+    narrations = []
+    with open(tex_file_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            if '%!' in line:
+                narration = line.split('%!')[1].strip()
+                narrations.append(narration)
+    return narrations
 
-def process_pptx(input_pptx, output_folder):
-    presentation = pptx.Presentation(input_pptx)
+def process_tex(input_tex, output_folder):
+    narrations = extract_narrations_from_tex(input_tex)
     os.makedirs(output_folder, exist_ok=True)
-    
-    for i, slide in enumerate(presentation.slides, start=1):
-        notes_text = ""
-        if slide.has_notes_slide and slide.notes_slide:
-            if slide.notes_slide.notes_text_frame:
-                for paragraph in slide.notes_slide.notes_text_frame.paragraphs:
-                    notes_text += paragraph.text + "\n"
-        
-        if notes_text:
-            scripts = split_script(notes_text)
-            wav_files = []
-            
-            for j, script in enumerate(scripts):
+    for i, narration in enumerate(narrations, start=1):
+        wav_filename = os.path.join(output_folder, f"{i}.wav")
+        scripts = split_script(narration)
+        print(scripts)
+        wav_files = []
+        for j, script in enumerate(scripts):
                 wav_filename = os.path.join(output_folder, f"{i}_{j}.wav")
                 playVoicePeak(script, wav_filename)
                 wav_files.append(wav_filename)
                 print(f"Created {wav_filename} for Slide {i}, Part {j + 1}")
-            
-            final_wav_filename = os.path.join(output_folder, f"{i}.wav")
-            concatenate_wav_files(wav_files, final_wav_filename)
-            print(f"Concatenated wav file created at {final_wav_filename}")
-            
-            # 一時ファイルを削除
-            for wav_file in wav_files:
-                if os.path.exists(wav_file):
-                    os.remove(wav_file)
-                    print(f"Deleted temporary file {wav_file}")
-                else:
-                    print(f"Temporary file {wav_file} does not exist")
+        final_wav_filename = os.path.join(output_folder, f"{i}.wav")
+        concatenate_wav_files(wav_files, final_wav_filename)
+        print(f"Concatenated wav file created at {final_wav_filename}")
+        # 一時ファイルを削除
+        for wav_file in wav_files:
+            if os.path.exists(wav_file):
+                os.remove(wav_file)
+                print(f"Deleted temporary file {wav_file}")
+            else:
+                print(f"Temporary file {wav_file} does not exist")
+
+def pdf_to_images(pdf_path, output_folder):
+    images = convert_from_path(pdf_path)
+    os.makedirs(output_folder, exist_ok=True)
+    for i, image in enumerate(images):
+        image_path = os.path.join(output_folder, f"{i+1}.png")
+        image.save(image_path, "PNG")
 
 def delete_all_files_in_folder(folder_path):
     try:
@@ -130,50 +130,50 @@ def delete_all_files_in_folder(folder_path):
 def sort_numerically(file_list):
     return sorted(file_list, key=lambda x: int(re.search(r'(\d+)', os.path.basename(x)).group(0)))
 
-
-@app.route('/pptx2mp4_voicepeak_add', methods=['POST'])
-def pptx2mp4_voicepeak_add():
+@app.route('/tex2mp4_voicepeak_add', methods=['POST'])
+def tex2mp4_voicepeak_add():
     delete_all_files_in_folder(UPLOAD_FOLDER1)
     delete_all_files_in_folder(UPLOAD_FOLDER2)
     delete_all_files_in_folder(DOWNLOAD_FOLDER1)
     delete_all_files_in_folder(DOWNLOAD_FOLDER2)
     delete_all_files_in_folder(DOWNLOAD_FOLDER3)
-    image1 = request.files['upload_files1']
-    if image1:
-        if allowed_file(image1.filename, ALLOWED_EXTENSIONS1):
-            image_name1 = secure_filename(image1.filename)
-            image1.save(os.path.join(UPLOAD_FOLDER1, image_name1))
+
+    pdf_file = request.files['upload_files1']
+    if pdf_file:
+        if allowed_file(pdf_file.filename, ALLOWED_EXTENSIONS1):
+            image_name = secure_filename(pdf_file.filename)
+            pdf_file.save(os.path.join(UPLOAD_FOLDER1, image_name))
         else:
-            image_name1 = None
+            image_name = None
             flash('pdfファイルではなかったので失敗しました.', 'alert alert-warning')
     else:
-        image_name1 = None
+        image_name = None
 
-    image2 = request.files['upload_files2']
-    if image2:
-        if allowed_file(image2.filename, ALLOWED_EXTENSIONS2):
-            image_name2 = secure_filename(image2.filename)
-            image2.save(os.path.join(UPLOAD_FOLDER2, image_name2))
+    tex_file = request.files['upload_files2']
+    if tex_file:
+        if allowed_file(tex_file.filename, ALLOWED_EXTENSIONS2):
+            tex_name = secure_filename(tex_file.filename)
+            tex_file.save(os.path.join(UPLOAD_FOLDER2, tex_name))
         else:
-            image_name2 = None
-            flash('pptxファイルではなかったので失敗しました.', 'alert alert-warning')
+            tex_name = None
+            flash('texファイルではなかったので失敗しました.', 'alert alert-warning')
     else:
-        image_name2 = None
+        tex_name = None
 
-    pdf_path = os.path.join(UPLOAD_FOLDER1, image_name1)
+    pdf_path = os.path.join(UPLOAD_FOLDER1, image_name)
     output_folder = DOWNLOAD_FOLDER1
     pdf_to_images(pdf_path, output_folder)
 
-    pptx_path = os.path.join(UPLOAD_FOLDER2, image_name2)
+    tex_path = os.path.join(UPLOAD_FOLDER2, tex_name)
     output_folder = DOWNLOAD_FOLDER2
-    process_pptx(pptx_path, output_folder)
+    process_tex(tex_path, output_folder)
 
     png_files = glob.glob(f'{DOWNLOAD_FOLDER1}/*.png')
     png_files = sort_numerically(png_files)
 
     wav_files = glob.glob(f'{DOWNLOAD_FOLDER2}/*.wav')
     wav_files = sort_numerically(wav_files)
-    
+
     if len(wav_files) != len(png_files):
         print("wavファイルとpngファイルの個数が等しくないので終了します.")
         sys.exit()
@@ -188,19 +188,18 @@ def pptx2mp4_voicepeak_add():
         clips.append(video_clip)
 
     concat_clip = concatenate_videoclips(clips, method="compose")
-    concat_clip.write_videofile(os.path.join(DOWNLOAD_FOLDER3, image_name1.split(".")[0] + ".mp4"), fps=24, write_logfile=True)
+    concat_clip.write_videofile(os.path.join(DOWNLOAD_FOLDER3, image_name.split(".")[0] + ".mp4"), fps=24, write_logfile=True)
 
     flash('変換されました', 'alert alert-info')
-    session['image_name1'] = image_name1  # Save image_name1 in the session
-    return render_template('core/pptx2mp4_voicepeak.html',image_name1=image_name1)
+    session['image_name'] = image_name  # Save image_name in the session
+    return render_template('core/tex2mp4.html', image_name=image_name)
 
-@app.route('/pptx2mp4_voicepeak_download', methods=['GET'])
-def pptx2mp4_voicepeak_download():
-    image_name1 = session.get('image_name1')
-    print(f"image_name1 retrieved from session: {image_name1}")  # Debugging statement
-    if image_name1:
-        return send_file(f'static/mp4/{image_name1.split(".")[0]}.mp4', as_attachment=True)
+@app.route('/tex2mp4_voicepeak_download', methods=['GET'])
+def tex2mp4_voicepeak_download():
+    image_name = session.get('image_name')
+    print(f"image_name retrieved from session: {image_name}")  # Debugging statement
+    if image_name:
+        return send_file(f'static/mp4/{image_name.split(".")[0]}.mp4', as_attachment=True)
     else:
         flash('ファイルが見つかりませんでした。', 'alert alert-warning')
-        return redirect(url_for('pptx2mp4_voicepeak_add'))
-
+        return redirect(url_for('tex2mp4_voicepeak_add'))
