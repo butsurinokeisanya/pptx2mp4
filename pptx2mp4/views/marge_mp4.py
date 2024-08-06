@@ -46,6 +46,10 @@ def margemp4(input_folder, output_path):
     else:
         print("No clips to concatenate.")
 
+def make_folder(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
 def delete_all_files_in_folder(folder_path):
     try:
         for filename in os.listdir(folder_path):
@@ -63,6 +67,8 @@ def delete_all_files_in_folder(folder_path):
 
 @app.route('/marge_mp4_add', methods=['POST'])
 def marge_mp4_add():
+    make_folder(UPLOAD_FOLDER)
+    make_folder(DOWNLOAD_FOLDER)
     delete_all_files_in_folder(UPLOAD_FOLDER)
     delete_all_files_in_folder(DOWNLOAD_FOLDER)
     if request.files.getlist('upload_files')[0].filename:

@@ -60,6 +60,10 @@ def process_pptx(input_pptx, output_folder):
                 wav_filename = os.path.join(output_folder, f"{i}.wav")
                 convert_text_to_speech(notes_text, wav_filename)
                 print(f"Created {wav_filename} for Slide {i}")
+                
+def make_folder(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
 
 def delete_all_files_in_folder(folder_path):
     try:
@@ -82,6 +86,11 @@ def sort_numerically(file_list):
 
 @app.route('/pptx2mp4_add', methods=['POST'])
 def pptx2mp4_add():
+    make_folder(UPLOAD_FOLDER1)
+    make_folder(UPLOAD_FOLDER2)
+    make_folder(DOWNLOAD_FOLDER1)
+    make_folder(DOWNLOAD_FOLDER2)
+    make_folder(DOWNLOAD_FOLDER3)
     delete_all_files_in_folder(UPLOAD_FOLDER1)
     delete_all_files_in_folder(UPLOAD_FOLDER2)
     delete_all_files_in_folder(DOWNLOAD_FOLDER1)

@@ -40,7 +40,10 @@ def process_txt(input_txt, output_folder,image_name):
         convert_text_to_speech(notes_text, wav_filename)
         print(f"Created {wav_filename}")
 
-
+def make_folder(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        
 def delete_all_files_in_folder(folder_path):
     try:
         # フォルダの中のすべてのファイルとサブフォルダを削除
@@ -59,6 +62,8 @@ def delete_all_files_in_folder(folder_path):
 
 @app.route('/txt2wav_add', methods=['POST'])
 def txt2wav_add():
+    make_folder(UPLOAD_FOLDER)
+    make_folder(DOWNLOAD_FOLDER)
     delete_all_files_in_folder(UPLOAD_FOLDER)
     delete_all_files_in_folder(DOWNLOAD_FOLDER)
     image = request.files['upload_files']

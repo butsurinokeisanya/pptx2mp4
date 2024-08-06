@@ -44,6 +44,10 @@ def compress_image(input_image_path, output_folder, image_name):
 
     os.remove(input_image_path)  # Remove the temporary image
 
+def make_folder(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
 def delete_all_files_in_folder(folder_path):
     try:
         # フォルダの中のすべてのファイルとサブフォルダを削除
@@ -63,6 +67,10 @@ def delete_all_files_in_folder(folder_path):
 
 @app.route('/pdf2png_add', methods=['POST'])
 def pdf2png_add():
+    make_folder(UPLOAD_FOLDER)
+    make_folder(DOWNLOAD_FOLDER)
+    delete_all_files_in_folder(UPLOAD_FOLDER)
+    delete_all_files_in_folder(DOWNLOAD_FOLDER)
     image = request.files['upload_files']
     delete_all_files_in_folder(UPLOAD_FOLDER)
     image_name=""

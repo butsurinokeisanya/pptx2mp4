@@ -59,6 +59,10 @@ def pdf_to_images(pdf_path, output_folder):
         image_path = os.path.join(output_folder, f"{i+1}.png")
         image.save(image_path, "PNG")
 
+def make_folder(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        
 def delete_all_files_in_folder(folder_path):
     try:
         for filename in os.listdir(folder_path):
@@ -79,6 +83,11 @@ def sort_numerically(file_list):
 
 @app.route('/tex2mp4_add', methods=['POST'])
 def tex2mp4_add():
+    make_folder(UPLOAD_FOLDER1)
+    make_folder(UPLOAD_FOLDER2)
+    make_folder(DOWNLOAD_FOLDER1)
+    make_folder(DOWNLOAD_FOLDER2)
+    make_folder(DOWNLOAD_FOLDER3)
     delete_all_files_in_folder(UPLOAD_FOLDER1)
     delete_all_files_in_folder(UPLOAD_FOLDER2)
     delete_all_files_in_folder(DOWNLOAD_FOLDER1)
