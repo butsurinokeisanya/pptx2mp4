@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block body %}
+<table width="100%" cellspacing="0" cellpadding="5">
+    <tbody>
+        <tr>
+            <th class="subtitle" align="center">
+                <big>marge_mp4</big>
+            </th>
+        </tr>
+    </tbody>
+</table>
+　本プログラムの目的は複数の動画ファイルを結合することである.<br><br>
+<form action="{{ url_for('marge_mp4_add') }}" method="post" class="add-entry" enctype="multipart/form-data">
+    <table cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+            <th class="th" nowrap="" align="left">
+                <small>■</small>
+                複数のmp4ファイル
+            </th>
+            <td class="td" nowrap="">
+                <input type="file" id="upload_files" name="upload_files" accept=".pptx" class="form-control"
+                    multiple="multiple">
+            </td>
+        </tbody>
+    </table>
+    <input type="submit" value="作成" class="form-control btn btn-primary">
+</form>
+
+{% if image_name %}
+<p><a href="{{ url_for('marge_mp4_download') }}">ダウンロード</a>
+</p>
+{% endif %}
+{% endblock %}

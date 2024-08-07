@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block body %}
+<table width="100%" cellspacing="0" cellpadding="5">
+    <tbody>
+        <tr>
+            <th class="subtitle" align="center">
+                <big>pdf2png</big>
+            </th>
+        </tr>
+    </tbody>
+</table>
+　本プログラムの目的はyoutube用サムネイルの作成である. 本プログラムによってpdfファイルの1ページ目をpngファイルに変換する. youtubeのサムネイルの許容容量2MBを超える場合,
+2MBを下回るように圧縮処理を施す.<br><br>
+<form action="{{ url_for('pdf2png_add') }}" method="post" class="add-entry" enctype="multipart/form-data">
+    <table cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+            <th class="th" nowrap="" align="left">
+                <small>■</small>
+                pdfファイル
+            </th>
+            <td class="td" nowrap="">
+                <input type="file" id="upload_files" name="upload_files" accept=".pdf" class="form-control">
+            </td>
+        </tbody>
+    </table>
+    <input type="submit" value="作成" class="form-control btn btn-primary">
+</form>
+
+{% if image_name %}
+<p><a href="{{ url_for('pdf2png_download') }}">ダウンロード</a>
+</p>
+{% endif %}
+{% endblock %}
