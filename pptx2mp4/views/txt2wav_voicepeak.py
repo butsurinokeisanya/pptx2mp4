@@ -53,7 +53,7 @@ def preprocess_script(script):
     return script
 
 def split_script(script, max_length=140):
-    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', script)
+    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', preprocess_script(script))
     parts = []
     current_part = ""
 

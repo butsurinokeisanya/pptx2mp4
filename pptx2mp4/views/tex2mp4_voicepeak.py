@@ -45,23 +45,6 @@ def playVoicePeak(script, outpath, narrator="Japanese Female 4", happy=80, sad=0
     process = subprocess.Popen(args)
     process.communicate()
 
-def split_script(script, max_length=140):
-    sentences = re.split(r'(?<=。|！|\!|\,|、|\.|\?|\？)', script)
-    parts = []
-    current_part = ""
-
-    for sentence in sentences:
-        if len(current_part) + len(sentence) <= max_length:
-            current_part += sentence
-        else:
-            if current_part:
-                parts.append(current_part)
-            current_part = sentence
-
-    if current_part:
-        parts.append(current_part)
-
-    return parts
 
 def preprocess_script(script):
     # 改行とスペースを削除
@@ -69,7 +52,7 @@ def preprocess_script(script):
     return script
 
 def split_script(script, max_length=140):
-    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', script)
+    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', preprocess_script(script))
     parts = []
     current_part = ""
 
