@@ -102,16 +102,17 @@ def process_pptx(input_pptx, output_folder):
             for j, script in enumerate(scripts):
                 wav_filename = os.path.join(output_folder, f"{i}_{j}.wav")
                 success = False
-            attempts = 0
-            while not success and attempts < 5:
-                playVoicePeak(script, wav_filename)
-                if os.path.exists(wav_filename):
-                    success = True
-                    wav_files.append(wav_filename)
-                    print(f"Created {wav_filename} for Slide {i}, Part {j + 1}")
-                else:
-                    attempts += 1
-                    print(f"Retrying {wav_filename} for Slide {i}, Part {j + 1} (Attempt {attempts})")
+                attempts = 0
+                while not success and attempts < 5:
+                    playVoicePeak(script, wav_filename)
+                    if os.path.exists(wav_filename):
+                        success = True
+                        wav_files.append(wav_filename)
+                        print(f"Created {wav_filename} for Slide {i}, Part {j + 1}")
+                    else:
+                        attempts += 1
+                        print(f"Retrying {wav_filename} for Slide {i}, Part {j + 1} (Attempt {attempts})")
+
             if wav_files:
                 final_wav_filename = os.path.join(output_folder, f"{i}.wav")
                 concatenate_wav_files(wav_files, final_wav_filename)
