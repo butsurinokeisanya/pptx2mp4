@@ -21,5 +21,5 @@ Output #0, mp3, to '3TEMP_MPY_wvf_snd.mp3':
     Stream #0:0: Audio: mp3 (libmp3lame), 44100 Hz, stereo, s32p
     Metadata:
       encoder         : Lavc58.54.100 libmp3lame
-size=     256kB time=00:00:29.33 bitrate=  71.5kbits/s speed=58.6x    size=     882kB time=00:00:56.39 bitrate= 128.1kbits/s speed=  60x    
-video:0kB audio:882kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.028024%
+size=     256kB time=00:00:32.26 bitrate=  65.0kbits/s speed=63.5x    size=     768kB time=00:01:02.66 bitrate= 100.4kbits/s speed=62.1x    size=    1280kB time=00:01:25.26 bitrate= 123.0kbits/s speed=56.5x    size=    1792kB time=00:01:57.89 bitrate= 124.5kbits/s speed=58.6x    size=    2304kB time=00:02:33.70 bitrate= 122.8kbits/s speed=61.2x    size=    2816kB time=00:03:06.95 bitrate= 123.4kbits/s speed=62.1x    size=    3328kB time=00:03:32.97 bitrate= 128.0kbits/s speed=60.6x    size=    3451kB time=00:03:40.84 bitrate= 128.0kbits/s speed=59.9x    
+video:0kB audio:3451kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.007159%

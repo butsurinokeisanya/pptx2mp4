@@ -82,12 +82,14 @@ def process_txt(input_txt, output_folder,image_name):
 
     if notes_text:
         scripts = split_script(notes_text)
+        print(scripts)
         wav_files = []
         
         for j, script in enumerate(scripts):
             wav_filename = os.path.join(output_folder, f"{j}.wav")
             playVoicePeak(script, wav_filename)
             wav_files.append(wav_filename)
+            print(script)
             print(f"Created {wav_filename} for Slide Part {j + 1}")
         
         final_wav_filename = os.path.join(output_folder, image_name+".wav")
@@ -101,6 +103,8 @@ def process_txt(input_txt, output_folder,image_name):
                 print(f"Deleted temporary file {wav_file}")
             else:
                 print(f"Temporary file {wav_file} does not exist")
+
+
 def make_folder(folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)

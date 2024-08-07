@@ -70,12 +70,23 @@ def split_script(script, max_length=140):
         parts.append(current_part)
 
     return parts
+def load_wav_file(wav_file_path):
+    try:
+        if os.path.exists(wav_file_path):
+            return AudioSegment.from_wav(wav_file_path)
+        else:
+            print(f"Warning: {wav_file_path} does not exist.")
+            return None
+    except Exception as e:
+        print(f"Error loading {wav_file_path}: {e}")
+        return None
 
 def concatenate_wav_files(wav_files, output_path):
     combined = AudioSegment.empty()
     for wav_file in wav_files:
-        audio_segment = AudioSegment.from_wav(wav_file)
-        combined += audio_segment
+        audio_segment = load_wav_file(wav_file)
+        if audio_segment:
+            combined += audio_segment
     combined.export(output_path, format="wav")
 
 
