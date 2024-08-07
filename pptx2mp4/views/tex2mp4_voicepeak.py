@@ -63,14 +63,35 @@ def split_script(script, max_length=140):
 
     return parts
 
+def preprocess_script(script):
+    # 改行とスペースを削除
+    script = re.sub(r'\s+', '\n', script)
+    return script
+
+def split_script(script, max_length=140):
+    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', script)
+    parts = []
+    current_part = ""
+
+    for sentence in sentences:
+        if len(current_part) + len(sentence) <= max_length:
+            current_part += sentence
+        else:
+            if current_part:
+                parts.append(current_part)
+            current_part = sentence
+
+    if current_part:
+        parts.append(current_part)
+
+    return parts
+
 def concatenate_wav_files(wav_files, output_path):
     combined = AudioSegment.empty()
     for wav_file in wav_files:
-        if os.path.exists(wav_file):
-            combined += AudioSegment.from_wav(wav_file)
-        else:
-            print(f"File not found: {wav_file}")
-    combined.export(output_path, format='wav')
+        audio_segment = AudioSegment.from_wav(wav_file)
+        combined += audio_segment
+    combined.export(output_path, format="wav")
 
 def extract_narrations_from_tex(tex_file_path):
     narrations = []

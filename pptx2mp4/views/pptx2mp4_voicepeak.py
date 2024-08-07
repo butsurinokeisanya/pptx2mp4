@@ -53,6 +53,11 @@ def playVoicePeak(script, outpath, narrator="Japanese Female 4", happy=80, sad=0
     process = subprocess.Popen(args)
     process.communicate()
 
+def preprocess_script(script):
+    # 改行とスペースを削除
+    script = re.sub(r'\s+', '\n', script)
+    return script
+
 def split_script(script, max_length=140):
     sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', script)
     parts = []
@@ -98,6 +103,7 @@ def process_pptx(input_pptx, output_folder):
                 wav_filename = os.path.join(output_folder, f"{i}_{j}.wav")
                 playVoicePeak(script, wav_filename)
                 wav_files.append(wav_filename)
+                print(script)
                 print(f"Created {wav_filename} for Slide {i}, Part {j + 1}")
             
             final_wav_filename = os.path.join(output_folder, f"{i}.wav")
