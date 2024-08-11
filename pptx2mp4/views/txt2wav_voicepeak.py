@@ -47,8 +47,13 @@ def playVoicePeak(script, outpath, narrator="Japanese Female 4", happy=80, sad=0
     process = subprocess.Popen(args)
     process.communicate()
 
+def preprocess_script(script):
+    # 改行とスペースを削除
+    script = re.sub(r'\s+', '', script)
+    return script
+
 def split_script(script, max_length=140):
-    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', script)
+    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', preprocess_script(script))
     parts = []
     current_part = ""
 
@@ -71,6 +76,7 @@ def concatenate_wav_files(wav_files, output_path):
         audio_segment = AudioSegment.from_wav(wav_file)
         combined += audio_segment
     combined.export(output_path, format="wav")
+
 
 
 def process_txt(input_txt, output_folder,image_name):

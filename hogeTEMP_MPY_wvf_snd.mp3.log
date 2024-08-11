@@ -21,5 +21,5 @@ Output #0, mp3, to 'hogeTEMP_MPY_wvf_snd.mp3':
     Stream #0:0: Audio: mp3 (libmp3lame), 44100 Hz, stereo, s32p
     Metadata:
       encoder         : Lavc58.54.100 libmp3lame
-size=     626kB time=00:00:40.04 bitrate= 128.1kbits/s speed=93.2x    
-video:0kB audio:626kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.039460%
+size=     223kB time=00:00:14.21 bitrate= 128.4kbits/s speed=28.4x    size=     484kB time=00:00:30.90 bitrate= 128.2kbits/s speed=40.8x    
+video:0kB audio:483kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.051125%

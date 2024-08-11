@@ -53,8 +53,13 @@ def playVoicePeak(script, outpath, narrator="Japanese Female 4", happy=80, sad=0
     process = subprocess.Popen(args)
     process.communicate()
 
+def preprocess_script(script):
+    # 改行とスペースを削除
+    script = re.sub(r'\s+', '', script)
+    return script
+
 def split_script(script, max_length=140):
-    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', script)
+    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', preprocess_script(script))
     parts = []
     current_part = ""
 
@@ -107,21 +112,33 @@ def process_pptx(input_pptx, output_folder):
             
             for j, script in enumerate(scripts):
                 wav_filename = os.path.join(output_folder, f"{i}_{j}.wav")
-                playVoicePeak(script, wav_filename)
-                wav_files.append(wav_filename)
-                print(f"Created {wav_filename} for Slide {i}, Part {j + 1}")
-            
-            final_wav_filename = os.path.join(output_folder, f"{i}.wav")
-            concatenate_wav_files(wav_files, final_wav_filename)
-            print(f"Concatenated wav file created at {final_wav_filename}")
-            
-            # 一時ファイルを削除
-            for wav_file in wav_files:
-                if os.path.exists(wav_file):
-                    os.remove(wav_file)
-                    print(f"Deleted temporary file {wav_file}")
-                else:
-                    print(f"Temporary file {wav_file} does not exist")
+                success = False
+                attempts = 0
+                while not success and attempts < 5:
+                    playVoicePeak(script, wav_filename)
+                    if os.path.exists(wav_filename):
+                        success = True
+                        wav_files.append(wav_filename)
+                        print(f"Created {wav_filename} for Slide {i}, Part {j + 1}")
+                    else:
+                        attempts += 1
+                        print(f"Retrying {wav_filename} for Slide {i}, Part {j + 1} (Attempt {attempts})")
+
+            if wav_files:
+                final_wav_filename = os.path.join(output_folder, f"{i}.wav")
+                concatenate_wav_files(wav_files, final_wav_filename)
+                print(f"Concatenated wav file created at {final_wav_filename}")
+                
+                # 一時ファイルを削除
+                for wav_file in wav_files:
+                    if os.path.exists(wav_file):
+                        os.remove(wav_file)
+                        print(f"Deleted temporary file {wav_file}")
+                    else:
+                        print(f"Temporary file {wav_file} does not exist")
+            else:
+                print(f"No wav files were created for Slide {i}")
+
 def make_folder(folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)

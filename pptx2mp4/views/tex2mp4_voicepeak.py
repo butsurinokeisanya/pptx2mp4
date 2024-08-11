@@ -32,7 +32,6 @@ def allowed_file(filename, ALLOWED_EXTENSIONS):
 
 def randomname(n):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=n))
-
 def playVoicePeak(script, outpath, narrator="Japanese Female 4", happy=80, sad=0, angry=0, fun=10):
     exepath = "C:/Program Files/VOICEPEAK/voicepeak.exe"
     args = [
@@ -45,8 +44,13 @@ def playVoicePeak(script, outpath, narrator="Japanese Female 4", happy=80, sad=0
     process = subprocess.Popen(args)
     process.communicate()
 
-def split_script(script, max_length=140):
-    sentences = re.split(r'(?<=。|！|\!|\,|、|\.|\?|\？)', script)
+def preprocess_script(script):
+    # Remove newlines and spaces
+    script = re.sub(r'\s+', '', script)
+    return script
+
+def split_script(script, max_length=130):
+    sentences = re.split(r'(?<=。|！|\!|\.|\,|、|\?|\？)', preprocess_script(script))
     parts = []
     current_part = ""
 
@@ -66,11 +70,9 @@ def split_script(script, max_length=140):
 def concatenate_wav_files(wav_files, output_path):
     combined = AudioSegment.empty()
     for wav_file in wav_files:
-        if os.path.exists(wav_file):
-            combined += AudioSegment.from_wav(wav_file)
-        else:
-            print(f"File not found: {wav_file}")
-    combined.export(output_path, format='wav')
+        audio_segment = AudioSegment.from_wav(wav_file)
+        combined += audio_segment
+    combined.export(output_path, format="wav")
 
 def extract_narrations_from_tex(tex_file_path):
     narrations = []
@@ -85,25 +87,35 @@ def process_tex(input_tex, output_folder):
     narrations = extract_narrations_from_tex(input_tex)
     os.makedirs(output_folder, exist_ok=True)
     for i, narration in enumerate(narrations, start=1):
-        wav_filename = os.path.join(output_folder, f"{i}.wav")
         scripts = split_script(narration)
-        print(scripts)
         wav_files = []
         for j, script in enumerate(scripts):
-                wav_filename = os.path.join(output_folder, f"{i}_{j}.wav")
+            wav_filename = os.path.join(output_folder, f"{i}_{j}.wav")
+            success = False
+            attempts = 0
+            while not success and attempts < 5:
                 playVoicePeak(script, wav_filename)
-                wav_files.append(wav_filename)
-                print(f"Created {wav_filename} for Slide {i}, Part {j + 1}")
-        final_wav_filename = os.path.join(output_folder, f"{i}.wav")
-        concatenate_wav_files(wav_files, final_wav_filename)
-        print(f"Concatenated wav file created at {final_wav_filename}")
-        # 一時ファイルを削除
-        for wav_file in wav_files:
-            if os.path.exists(wav_file):
-                os.remove(wav_file)
-                print(f"Deleted temporary file {wav_file}")
-            else:
-                print(f"Temporary file {wav_file} does not exist")
+                if os.path.exists(wav_filename):
+                    success = True
+                    wav_files.append(wav_filename)
+                    print(f"Created {wav_filename} for Slide {i}, Part {j + 1}")
+                else:
+                    attempts += 1
+                    print(f"Retrying {wav_filename} for Slide {i}, Part {j + 1} (Attempt {attempts})")
+
+        if wav_files:
+            final_wav_filename = os.path.join(output_folder, f"{i}.wav")
+            concatenate_wav_files(wav_files, final_wav_filename)
+            print(f"Concatenated wav file created at {final_wav_filename}")
+            # Delete temporary files
+            for wav_file in wav_files:
+                if os.path.exists(wav_file):
+                    os.remove(wav_file)
+                    print(f"Deleted temporary file {wav_file}")
+                else:
+                    print(f"Temporary file {wav_file} does not exist")
+        else:
+            print(f"No wav files were created for Slide {i}")
 
 def pdf_to_images(pdf_path, output_folder):
     images = convert_from_path(pdf_path)
@@ -185,7 +197,7 @@ def tex2mp4_voicepeak_add():
 
     if len(wav_files) != len(png_files):
         print("wavファイルとpngファイルの個数が等しくないので終了します.")
-        sys.exit()
+        return redirect(url_for('tex2mp4_voicepeak_add'))
 
     clips = []
     for png_file, wav_file in zip(png_files, wav_files):
